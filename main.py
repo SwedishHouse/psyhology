@@ -1,54 +1,17 @@
-# import docx
-import csv
-# import openpyxl
-# group_one = {1: 'Анхель Аксель Рейес Апарисио',
-#              2: 'Ержанов Максат Куандыкович',
-#              3: 'Журавлева Татьяна Вячеславовна',
-#              4: 'Капча Мансилльа Марко Освальдо',
-#              5: 'Леушина Екатерина Владимировна',
-#              6: 'Матвеева Лариса Сергеевна',
-#              7: 'Эспиноза Валлес Ангело Сальватор'
-#              }
-#
-# group_two = {1: 'Акимченко Ульяна Владимировна',
-#              2: 'Андреева Виктория Валерьевна',
-#              3: 'Асбаганова Виктория Валерьевна',
-#              4: 'Атлашов Павел Николаевич',
-#              5: 'Бол Тон Май Нгуот',
-#              6: 'Болотина Виолетта Александровна',
-#              7: 'Боярский Иван Сергеевич',
-#              8: 'Буенростро Гроскоп Габриэль Хосе',
-#              9: 'Васильев Евгений Александрович',
-#              10: 'Гаврилов Данил Олегович',
-#              11: 'Гаврилов Данила Сергеевич',
-#              12: 'Горячкина Вероника Евгеньевна',
-#              13: 'Гуськов Данила Михайлович',
-#              14: 'Данилова Екатерина Олеговна',
-#              15: 'Золотухин Ярослав Анатольевич',
-#              16: 'Иванов Илья Эдуардович',
-#              17: 'Каллистов Мирон Ильич',
-#              18: 'Колесникова Виктория Евгеньевна',
-#              19: 'Лагунова Анастасия Васильевна',
-#              20: 'Леаль Эрнандес Мигель Анхель',
-#              21: 'Мелёхин Роман Валерьевич',
-#              22: 'Орлов Иван Андреевич',
-#              23: 'Пономарева Мария Андреевна',
-#              24: 'Попов Илья Александрович',
-#              25: 'Пресняков Кирилл Олегович',
-#              26: 'Рогожин Игорь Георгиевич',
-#              27: 'Филиппов Вадим Викторович',
-#              28: 'Хандоко Фарах Дефрида',
-#              29: 'Эспиноза Чири Хуан'
-#              }
-#
-# with open('one.xlsx', 'w') as one:
-#     one_writer = openpyxl.load_workbook('one.xlsx')
-#     # one_writer.writerow(len(group_one)*[' '] + ['Всего'])
-#
-# # for i in range(len(group_one)):
-# #     table_one.
-#
-# print(len(group_one))
+import matplotlib.pyplot as plt
+import time
+
+def GetPlot(data_input, title: str):
+    names = list(data_input.keys())
+    values = list(data_input.values())
+    all_vals = sum(values)
+    my_labels = []
+    for i in names:
+       my_labels.append(i + f"\n {int(data_input[i]/all_vals*100)}%")
+    plt.pie(values, labels=my_labels)
+    plt.title(title)
+    plt.show()
+
 
 raw_text = []
 people_count = 18
@@ -61,8 +24,61 @@ with open('data_significant.txt', encoding='utf-8', mode='r') as data:
         for j in t.keys():
             s = data.readline()
             s =''.join([i for i in s if not i.isdigit()]).lower()
-            t[j] = (s).rstrip(',\n')
+            t[j] = (s).rstrip(',\n').lstrip(' ')
         dict_data[i] = t
-    print('FFF')
+#     Work with main values
+    print(types_names[0])
+    main_val_1 = []
+    main_val_2 = []
+    main_val_3 = []
+    for i in dict_data.keys():
+        raw_text.append(dict_data[i][types_names[0]])
+    for i in raw_text:
+        stripped = i.split(',')
+        if '-' not in stripped:
+            main_val_1.append(stripped[0].strip(' '))
+            main_val_2.append(stripped[1].strip(' '))
+            main_val_3.append(stripped[2].strip(' '))
+    uniq_1 = dict.fromkeys({*main_val_1})
+    uniq_2 = dict.fromkeys({*main_val_2})
+    uniq_3 = dict.fromkeys({*main_val_3})
+    uniq_all = dict.fromkeys({*main_val_1, *main_val_2, *main_val_3})
+    for i in uniq_1.keys():
+        uniq_1[i] = 0
+    for i in uniq_2.keys():
+        uniq_2[i] = 0
+    for i in uniq_3.keys():
+        uniq_3[i] = 0
+    for i in uniq_all.keys():
+        uniq_all[i] = 0
+    #  Считаем, что на первом месте
+    for i in uniq_1.keys():
+        for j in main_val_1:
+            if i == j:
+                uniq_1[i] += 1
+    # Считаем, что на втором месте
+    for i in uniq_2.keys():
+        for j in main_val_2:
+            if i == j:
+                uniq_2[i] += 1
+    # Считаем, что на третьем месте
+    for i in uniq_3.keys():
+        for j in main_val_3:
+            if i == j:
+                uniq_3[i] += 1
+    # Считаем, что на больше всего встречается
+    for i in uniq_all.keys():
+        for j in [*main_val_1, *main_val_2, *main_val_3]:
+            if i == j:
+                uniq_all[i] += 1
+    GetPlot(uniq_1, "Главная ценность по Рокичу на 1 месте")
+    time.sleep(1)
+    GetPlot(uniq_2, "Главная ценность по Рокичу на 2 месте")
+    time.sleep(1)
+    GetPlot(uniq_3, "Главная ценность по Рокичу на 3 месте")
+    time.sleep(1)
+    GetPlot(uniq_all, "Главная ценность по Рокичу, абсолютное распределение")
+    time.sleep(1)
 
+print('The end')
 
